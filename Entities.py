@@ -38,7 +38,11 @@ class Tonks:
       self.actor.x -= 5
     if keyboard.right:
       self.actor.x += 5
-    self.actor.x = max(0, min(WIDTH, self.actor.x)) 
+    if self.actor.x <= -50 or self.actor.x >= WIDTH+50:
+      self.actor.x = WIDTH//2
+
+  def on_mouse_move(self, pos, rel, buttons):
+      self.actor.x = pos[0]
 
   def draw(self):
     self.actor.draw()

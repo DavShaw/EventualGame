@@ -1,13 +1,13 @@
 class Broker:
   def __init__(self):
-    self.event_handlers = {}
+    self.eventHandler = {}
 
-  def subscribe(self, event_type, handler):
-    if event_type not in self.event_handlers:
-      self.event_handlers[event_type] = []
-    self.event_handlers[event_type].append(handler)
+  def subscribe(self, eventType, handler):
+    if eventType not in self.eventHandler:
+      self.eventHandler[eventType] = []
+    self.eventHandler[eventType].append(handler)
 
-  def emit(self, event_type, *args):
-    if event_type in self.event_handlers:
-      for handler in self.event_handlers[event_type]:
+  def emit(self, eventType, *args):
+    if eventType in self.eventHandler:
+      for handler in self.eventHandler[eventType]:
         handler(*args)
