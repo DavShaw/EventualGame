@@ -1,7 +1,7 @@
 import random
 from pgzero.actor import Actor
 from pgzero.keyboard import keyboard
-import pgzero as pg
+import asyncio
 
 WIDTH = 800
 HEIGHT = 600
@@ -49,11 +49,11 @@ class Tonks:
         self.Actor.draw()
 
 # EVENTUAL ARCHITECTURE HERE!
-    def emitCollisionEvent(self, objectType, obj):
+    async def emitCollisionEvent(self, objectType, obj):
         for handler in self.event_handlers:
             handler(objectType, obj)
 
-    def checkCollision(self, godObjects, badObjects):
+    async def checkCollision(self, godObjects, badObjects):
         for good in godObjects:
             if self.Actor.colliderect(good.Actor):
                 self.emitCollisionEvent('good', good)
@@ -62,7 +62,46 @@ class Tonks:
             if self.Actor.colliderect(bad.Actor):
                 self.emitCollisionEvent('bad', bad)
 
-    def onCollision(self, callback):
+    async def onCollision(self, callback):
         self.event_handlers.append(callback)
+
+
+
+from eEntities import Tonks, GoodObject, BadObject, WIDTH
+import random
+
+tonks = Tonks()
+goodObjects = [GoodObject(random.randint(0, WIDTH), random.randint(-100, 0), random.randint(2, 5)) for _ in range(3)]
+BadObject = [BadObject(random.randint(0, WIDTH), random.randint(-100, 0), random.randint(2, 5)) for _ in range(3)]
+
+def onCollisionEvent(obj_type, obj):
+  if obj_type == 'good':
+    tonks.score += 1
+    obj.Actor.y = -50 
+  elif obj_type == 'bad':
+    tonks.score -= 1
+    obj.Actor.y = -50 
+    if tonks.score < 0:
+      tonks.score = 0
+
+tonks.onCollision(onCollisionEvent)
+
+def update():
+  tonks.update()
+  for obj in goodObjects + BadObject:
+    obj.update()
+  tonks.checkCollision(goodObjects, BadObject)
+
+def draw():
+  screen.clear()
+  tonks.draw()
+  for obj in goodObjects + BadObject:
+    obj.draw()
+  screen.draw.text(f"Score: {tonks.score}", (10, 10), fontsize=40, color="white")
+
+
+
+
+
 
 
